@@ -51,13 +51,13 @@ const TentangKamiContent = async () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 type-body">
               <div className="space-y-2">
                 <p><span className="font-semibold text-gray-600">Email:</span>{' '}
-                  <a href={`mailto:${data.email}`} className="text-primary hover:underline font-medium">{data.email}</a>
+                  <a href={`mailto:${data.email}`} className="text-primary hover:underline font-medium break-words">{data.email}</a>
                 </p>
                 <p><span className="font-semibold text-gray-600">WhatsApp:</span>{' '}
-                  <a href={`https://wa.me/${data.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">{data.whatsapp}</a>
+                  <a href={`https://wa.me/${data.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium break-words">{data.whatsapp}</a>
                 </p>
                 <p><span className="font-semibold text-gray-600">Instagram:</span>{' '}
-                  <a href={`https://instagram.com/${data.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">{data.instagram}</a>
+                  <a href={`https://instagram.com/${data.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium break-words">{data.instagram}</a>
                 </p>
               </div>
               <div className="space-y-2">
@@ -65,7 +65,7 @@ const TentangKamiContent = async () => {
                   <span className="text-primary font-medium">{data.tiktok}</span>
                 </p>
                 <p><span className="font-semibold text-gray-600">Youtube:</span>{' '}
-                  <a href={`https://youtube.com/${data.youtube.replace('@', '@')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">{data.youtube}</a>
+                  <a href={`https://youtube.com/${data.youtube.replace('@', '@')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium break-words">{data.youtube}</a>
                 </p>
               </div>
             </div>
