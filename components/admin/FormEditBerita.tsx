@@ -142,7 +142,7 @@ const FormEditBerita = ({ id, defaultValues }: Props) => {
               ref={fileRef}
               type="file"
               accept="image/*"
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
               onChange={handleFileChange}
             />
             {uploading ? (

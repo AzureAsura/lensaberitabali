@@ -1,4 +1,4 @@
-import { del, put } from '@vercel/blob'
+import { put } from '@vercel/blob'
 import { NextResponse } from 'next/server'
 
 export const PUT = async (request: Request) => {
@@ -20,12 +20,4 @@ export const PUT = async (request: Request) => {
   const blob = await put(file.name, file, { multipart: true, access: 'public', addRandomSuffix: true })
 
   return NextResponse.json(blob)
-}
-
-export const DELETE = async (request: Request) => {
-  const { searchParams } = new URL(request.url)
-  const imgUrl = searchParams.get('imgUrl') as string
-
-  await del(imgUrl)
-  return NextResponse.json({ status: 200 })
 }

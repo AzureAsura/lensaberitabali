@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma'
 import { auth } from '@/auth'
 import { beritaValidation } from '@/lib/zod'
 import { revalidatePath } from 'next/cache'
+import { deleteImage } from '@/lib/blob'
 
 type ActionState = { error?: string; success?: boolean } | null
 
@@ -59,6 +60,11 @@ export async function updateBeritaAction(id: string, prevState: ActionState, for
 
   const gambar = formData.get('gambar') as string | null
 
+  // Fetch the current image URL so we can delete the old blob after a successful update
+  const existing = gambar
+    ? await prisma.berita.findUnique({ where: { id }, select: { gambar: true } })
+    : null
+
   try {
     await prisma.berita.update({
       where: { id },
@@ -73,8 +79,14 @@ export async function updateBeritaAction(id: string, prevState: ActionState, for
     return { error: 'Gagal memperbarui berita' }
   }
 
+  // Delete the old blob now that the DB is updated (errors are swallowed inside deleteImage)
+  if (gambar && existing?.gambar && existing.gambar !== gambar) {
+    await deleteImage(existing.gambar)
+  }
+
   revalidatePath('/')
   revalidatePath('/admin/berita')
+  revalidatePath('/admin/edit-berita/[id]', 'page')
   revalidatePath(`/berita/${id}`)
   return { success: true }
 }
@@ -83,11 +95,16 @@ export async function deleteBeritaAction(id: string): Promise<ActionState> {
   const session = await auth()
   if (!session?.user || session.user.role !== 'admin') return { error: 'Unauthorized' }
 
+  let gambar: string | undefined
   try {
-    await prisma.berita.delete({ where: { id } })
+    const deleted = await prisma.berita.delete({ where: { id } })
+    gambar = deleted.gambar
   } catch {
     return { error: 'Gagal menghapus berita' }
   }
+
+  // Delete the image from Vercel Blob after a successful DB deletion
+  await deleteImage(gambar)
 
   revalidatePath('/')
   revalidatePath('/admin/berita')

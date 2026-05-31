@@ -1,6 +1,8 @@
 'use server'
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { deleteImage } from '@/lib/blob'
+import { getActiveIklan } from '@/lib/data/iklan'
 
 type ActionState = { error?: string; success?: boolean } | null
 
@@ -11,10 +13,20 @@ export async function uploadIklanAction(prevState: ActionState, formData: FormDa
   const gambar = formData.get('gambar') as string
   if (!gambar) return { error: 'Gambar wajib diupload' }
 
-  await prisma.iklan.updateMany({ data: { isActive: false } })
+  // Grab the currently active iklan before replacing it
+  const oldIklan = await getActiveIklan()
+
+  // Create the new active iklan
   await prisma.iklan.create({ data: { gambar, isActive: true } })
 
-  revalidatePath('/')
+  // Delete the old iklan row and its blob (only one iklan should ever exist)
+  if (oldIklan) {
+    await prisma.iklan.delete({ where: { id: oldIklan.id } })
+    await deleteImage(oldIklan.gambar)
+  }
+
+  // Revalidate admin preview + the public layout that renders the iklan popup
+  revalidatePath('/admin/iklan')
+  revalidatePath('/', 'layout')
   return { success: true }
 }
-
