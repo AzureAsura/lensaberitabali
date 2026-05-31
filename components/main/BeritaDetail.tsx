@@ -3,6 +3,8 @@ import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
 import { getBeritaById } from '@/lib/data/berita'
 
+
+
 const BeritaDetail = async ({ id }: { id: string }) => {
   const berita = await getBeritaById(id)
   if (!berita) notFound()
@@ -52,7 +54,19 @@ const BeritaDetail = async ({ id }: { id: string }) => {
           <p className="text-xs text-gray-500 text-center mb-8">{berita.deskripsiGambar}</p>
         )}
 
-        <article className="prose prose-gray max-w-none">
+        <article className="           prose max-w-none
+
+                        prose-black 
+
+                        prose-strong:font-bold
+
+                        prose-li:marker:text-black
+
+                        prose-blockquote:border-l-black prose-blockquote:text-black prose-blockquote:italic
+
+                        prose-code:text-black prose-code:bg-blue-50 prose-code:px-1 prose-code:rounded
+
+                        space-y-8">
           <ReactMarkdown>{berita.konten}</ReactMarkdown>
         </article>
 

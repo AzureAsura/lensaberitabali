@@ -17,7 +17,7 @@ export const PUT = async (request: Request) => {
     return NextResponse.json({ message: 'File must be an image' }, { status: 400 })
   }
 
-  const blob = await put(file.name, file, { multipart: true, access: 'public' })
+  const blob = await put(file.name, file, { multipart: true, access: 'public', addRandomSuffix: true })
 
   return NextResponse.json(blob)
 }
