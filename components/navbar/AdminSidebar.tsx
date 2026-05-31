@@ -3,7 +3,6 @@ import React from 'react';
 import {
   Newspaper,
   PlusCircle,
-  Pencil,
   FileText,
   LogOut,
   LayoutDashboard,
@@ -12,7 +11,11 @@ import {
 import Link from 'next/link';
 import { signOutFunction } from '@/lib/actions/auth';
 
-const NavLink = ({ href, label, icon: Icon }: any) => (
+const NavLink = ({ href, label, icon: Icon }: {
+  href: string
+  label: string
+  icon: React.ComponentType<{ size?: number; className?: string }>
+}) => (
   <Link
     href={href}
     className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-primary/5 hover:text-primary rounded-xl transition-all font-bold text-sm tracking-wide group"

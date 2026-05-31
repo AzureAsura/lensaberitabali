@@ -7,7 +7,7 @@ import { hashSync } from 'bcrypt-ts'
 import { redirect } from 'next/navigation'
 import { AuthError } from 'next-auth'
 
-export const registerFunction = async (prevState: any, formData: FormData) => {
+export const registerFunction = async (prevState: unknown, formData: FormData) => {
   const validatedData = registerValidation.safeParse(
     Object.fromEntries(formData.entries())
   )

@@ -14,23 +14,23 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { signOutFunction } from '@/lib/actions/auth';
 
+const NavLink = ({ href, label, onNavigate }: { href: string; label: string; onNavigate: () => void }) => (
+  <Link
+    href={href}
+    onClick={onNavigate}
+    className="flex items-center justify-between py-3 px-4 hover:bg-primary/5 rounded-xl transition-all group"
+  >
+    <span className="text-sm font-bold text-gray-700 group-hover:text-primary transition-colors">
+      {label}
+    </span>
+    <ChevronRight size={16} className="text-gray-400 group-hover:text-primary transition-transform group-hover:translate-x-0.5" />
+  </Link>
+);
+
 export const AdminNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => setIsOpen(!isOpen);
-
-  const NavLink = ({ href, label }: { href: string; label: string }) => (
-    <Link
-      href={href}
-      onClick={() => setIsOpen(false)}
-      className="flex items-center justify-between py-3 px-4 hover:bg-primary/5 rounded-xl transition-all group"
-    >
-      <span className="text-sm font-bold text-gray-700 group-hover:text-primary transition-colors">
-        {label}
-      </span>
-      <ChevronRight size={16} className="text-gray-400 group-hover:text-primary transition-transform group-hover:translate-x-0.5" />
-    </Link>
-  );
 
   return (
     <>
@@ -58,7 +58,7 @@ export const AdminNavbar = () => {
             <div className="p-6 space-y-4">
 
               <div className="border-b border-gray-100 pb-2">
-                <NavLink href="/admin" label="Dashboard" />
+                <NavLink href="/admin" label="Dashboard" onNavigate={() => setIsOpen(false)} />
               </div>
 
               <Accordion type="single" collapsible className="w-full">
@@ -69,8 +69,8 @@ export const AdminNavbar = () => {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="pt-1 pb-3 space-y-1">
-                    <NavLink href="/admin/tambah-berita" label="Tambah Berita" />
-                    <NavLink href="/admin/edit-tentang-kami" label="Edit Tentang Kami" />
+                    <NavLink href="/admin/tambah-berita" label="Tambah Berita" onNavigate={() => setIsOpen(false)} />
+                    <NavLink href="/admin/edit-tentang-kami" label="Edit Tentang Kami" onNavigate={() => setIsOpen(false)} />
                   </AccordionContent>
                 </AccordionItem>
 
@@ -81,8 +81,8 @@ export const AdminNavbar = () => {
                     </div>
                   </AccordionTrigger>
                   <AccordionContent className="pt-1 pb-3 space-y-1">
-                    <NavLink href="/admin/berita" label="Berita" />
-                    <NavLink href="/admin/iklan" label="Iklan" />
+                    <NavLink href="/admin/berita" label="Berita" onNavigate={() => setIsOpen(false)} />
+                    <NavLink href="/admin/iklan" label="Iklan" onNavigate={() => setIsOpen(false)} />
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

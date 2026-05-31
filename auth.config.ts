@@ -8,7 +8,7 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
-      const role = (auth?.user as any)?.role
+      const role = auth?.user?.role
 
       const isOnAuthPage = nextUrl.pathname.startsWith('/login')
       const isOnAdminPage = nextUrl.pathname.startsWith('/admin')
@@ -29,13 +29,13 @@ export const authConfig: NextAuthConfig = {
     },
 
     jwt({ token, user }) {
-      if (user) token.role = (user as any).role
+      if (user) token.role = user.role
       return token
     },
 
     session({ session, token }) {
       session.user.id = token.sub as string
-      ;(session.user as any).role = token.role
+      session.user.role = typeof token.role === 'string' ? token.role : null
       return session
     },
   },

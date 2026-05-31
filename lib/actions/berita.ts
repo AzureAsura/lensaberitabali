@@ -8,7 +8,7 @@ type ActionState = { error?: string; success?: boolean } | null
 
 export async function createBeritaAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
   // const session = await auth()
-  // if (!session?.user || (session.user as any).role !== 'admin') return { error: 'Unauthorized' }
+  // if (!session?.user || session.user.role !== 'admin') return { error: 'Unauthorized' }
 
   const gambar = formData.get('gambar') as string
   if (!gambar) return { error: 'Gambar wajib diupload' }
@@ -44,7 +44,7 @@ export async function createBeritaAction(prevState: ActionState, formData: FormD
 
 export async function updateBeritaAction(id: string, prevState: ActionState, formData: FormData): Promise<ActionState> {
   const session = await auth()
-  if (!session?.user || (session.user as any).role !== 'admin') return { error: 'Unauthorized' }
+  if (!session?.user || session.user.role !== 'admin') return { error: 'Unauthorized' }
 
   const fields = {
     judul: formData.get('judul') as string,
@@ -81,7 +81,7 @@ export async function updateBeritaAction(id: string, prevState: ActionState, for
 
 export async function deleteBeritaAction(id: string): Promise<ActionState> {
   const session = await auth()
-  if (!session?.user || (session.user as any).role !== 'admin') return { error: 'Unauthorized' }
+  if (!session?.user || session.user.role !== 'admin') return { error: 'Unauthorized' }
 
   try {
     await prisma.berita.delete({ where: { id } })
