@@ -23,13 +23,13 @@ const BeritaDetail = async ({ id }: { id: string }) => {
     <main className="w-full min-h-screen bg-white font-sans selection:bg-primary/20">
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-10">
 
-        {berita.kategori && (
+        {/* {berita.kategori && (
           <div className="mb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-3 py-1 rounded-full">
               {berita.kategori}
             </span>
           </div>
-        )}
+        )} */}
 
         <h1 className="text-2xl md:text-4xl font-extrabold text-gray-900 tracking-tight leading-tight mb-4">
           {berita.judul}
