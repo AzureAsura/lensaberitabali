@@ -14,7 +14,7 @@ const HeroNews = async ({ page = 1 }: { page?: number }) => {
       {berita.length === 0 ? (
         <p className="type-body text-center text-muted-foreground">Belum ada berita.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 space-y-4">
           {berita.map((item: { id: string; judul: string; gambar: string }) => (
             <div key={item.id} className="group cursor-pointer flex flex-col space-y-4">
               <Link href={`/berita/${item.id}`} className="relative w-full aspect-[16/10] overflow-hidden rounded-[24px] shadow-sm bg-gray-100">

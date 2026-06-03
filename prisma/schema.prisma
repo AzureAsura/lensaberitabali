@@ -97,3 +97,12 @@ model Iklan {
 
   @@map("iklan")
 }
+
+model Kategori {
+  id        String   @id @default(cuid())
+  nama      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("kategoris")
+}

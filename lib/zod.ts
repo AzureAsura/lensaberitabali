@@ -30,6 +30,11 @@ export const tentangKamiValidation = z.object({
   youtube: z.string().min(1, 'YouTube wajib diisi'),
 })
 
+export const kategoriValidation = z.object({
+  nama: z.string().min(1, 'Nama kategori wajib diisi').max(100, 'Nama kategori terlalu panjang'),
+})
+
 export type SignInData = z.infer<typeof signInValidation>
 export type BeritaData = z.infer<typeof beritaValidation>
 export type TentangKamiData = z.infer<typeof tentangKamiValidation>
+export type KategoriData = z.infer<typeof kategoriValidation>

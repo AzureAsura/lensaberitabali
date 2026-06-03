@@ -1,7 +1,7 @@
 'use client'
 import { useActionState, useState, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
-import { Type, User, ImageIcon, FileText } from 'lucide-react'
+import { Type, User, ImageIcon, FileText, Tag } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { updateBeritaAction } from '@/lib/actions/berita'
 import Image from 'next/image'
@@ -45,6 +45,8 @@ const editorClass = `
   [&_.md-editor-preview_strong]:font-bold
 `
 
+type Kategori = { id: string; nama: string }
+
 type Props = {
   id: string
   defaultValues: {
@@ -55,9 +57,10 @@ type Props = {
     konten: string
     kategori?: string | null
   }
+  kategoris: Kategori[]
 }
 
-const FormEditBerita = ({ id, defaultValues }: Props) => {
+const FormEditBerita = ({ id, defaultValues, kategoris }: Props) => {
   const [content, setContent] = useState(defaultValues.konten)
   const [imageUrl, setImageUrl] = useState('')
   const [imagePreview, setImagePreview] = useState<string | null>(null)
@@ -173,6 +176,22 @@ const FormEditBerita = ({ id, defaultValues }: Props) => {
             className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium resize-none h-[110px]"
           />
         </div>
+      </div>
+
+      <div className="flex flex-col space-y-2">
+        <label className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
+          <Tag size={16} className="text-primary" /> Kategori
+        </label>
+        <select
+          name="kategori"
+          defaultValue={defaultValues.kategori ?? ''}
+          className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium bg-white"
+        >
+          <option value="">-- Pilih Kategori --</option>
+          {kategoris.map((k) => (
+            <option key={k.id} value={k.nama}>{k.nama}</option>
+          ))}
+        </select>
       </div>
 
       <div className="flex flex-col space-y-2">

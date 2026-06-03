@@ -3,6 +3,8 @@ import React from 'react';
 import {
   Newspaper,
   PlusCircle,
+  FolderPlus,
+  Tags,
   FileText,
   LogOut,
   LayoutDashboard,
@@ -43,6 +45,7 @@ export const AdminSidebar = () => {
           </p>
           <div className="space-y-1">
             <NavLink href="/admin/tambah-berita" label="Tambah Berita" icon={PlusCircle} />
+            <NavLink href="/admin/tambah-kategori" label="Tambah Kategori" icon={FolderPlus} />
             <NavLink href="/admin/edit-tentang-kami" label="Edit Tentang Kami" icon={FileText} />
           </div>
         </div>
@@ -53,7 +56,8 @@ export const AdminSidebar = () => {
           </p>
           <div className="space-y-1">
             <NavLink href="/admin/berita" label="Berita" icon={Newspaper} />
-          <NavLink href="/admin/iklan" label="Iklan" icon={ImageIcon} />
+            <NavLink href="/admin/kategori" label="Kategori" icon={Tags} />
+            <NavLink href="/admin/iklan" label="Iklan" icon={ImageIcon} />
           </div>
         </div>
       </div>

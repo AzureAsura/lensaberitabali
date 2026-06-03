@@ -9,14 +9,15 @@ const BeritaDetail = async ({ id }: { id: string }) => {
   const berita = await getBeritaById(id)
   if (!berita) notFound()
 
-  const formattedDate = berita.createdAt.toLocaleDateString('id-ID', {
+  const formattedDate = berita.createdAt.toLocaleString('id-ID', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  })
+    timeZone: 'Asia/Makassar',
+  }) + ' WITA'
 
   return (
     <main className="w-full min-h-screen bg-white font-sans selection:bg-primary/20">

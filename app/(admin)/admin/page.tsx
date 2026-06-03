@@ -5,6 +5,7 @@ import {
   Megaphone,
   FileText,
   Globe,
+  FolderArchive,
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image';
@@ -60,6 +61,17 @@ const DashboardPage = () => {
               <span className="flex items-center gap-2">
                 <FileText size={16} className="text-gray-400 group-hover:text-primary" />
                 Tambah Berita Baru
+              </span>
+              <Plus size={16} className="text-gray-400 group-hover:text-primary transition-colors" />
+            </Link>
+
+             <Link
+              href="/admin/tambah-kategori"
+              className="w-full flex items-center justify-between p-4 bg-white border-2 border-gray-200 hover:border-primary text-black hover:bg-gray-50 rounded-xl shadow-md transition-all font-bold text-xs uppercase tracking-wide group"
+            >
+              <span className="flex items-center gap-2">
+                <FolderArchive size={16} className="text-gray-400 group-hover:text-primary" />
+                Tambah Kategori
               </span>
               <Plus size={16} className="text-gray-400 group-hover:text-primary transition-colors" />
             </Link>

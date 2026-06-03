@@ -70,6 +70,7 @@ export const AdminNavbar = () => {
                   </AccordionTrigger>
                   <AccordionContent className="pt-1 pb-3 space-y-1">
                     <NavLink href="/admin/tambah-berita" label="Tambah Berita" onNavigate={() => setIsOpen(false)} />
+                    <NavLink href="/admin/tambah-kategori" label="Tambah Kategori" onNavigate={() => setIsOpen(false)} />
                     <NavLink href="/admin/edit-tentang-kami" label="Edit Tentang Kami" onNavigate={() => setIsOpen(false)} />
                   </AccordionContent>
                 </AccordionItem>
@@ -82,6 +83,7 @@ export const AdminNavbar = () => {
                   </AccordionTrigger>
                   <AccordionContent className="pt-1 pb-3 space-y-1">
                     <NavLink href="/admin/berita" label="Berita" onNavigate={() => setIsOpen(false)} />
+                    <NavLink href="/admin/kategori" label="Kategori" onNavigate={() => setIsOpen(false)} />
                     <NavLink href="/admin/iklan" label="Iklan" onNavigate={() => setIsOpen(false)} />
                   </AccordionContent>
                 </AccordionItem>
