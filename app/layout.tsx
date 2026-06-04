@@ -32,6 +32,11 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     images: ['/logo.jpeg'],
   },
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/favicon.ico',
+    apple: '/apple-icon.png',
+  },
   robots: { index: true, follow: true },
 };
 
