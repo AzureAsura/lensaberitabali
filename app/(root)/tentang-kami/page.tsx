@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import TentangKamiContent from '@/components/main/TentangKamiContent'
 import TentangKamiSkeleton from '@/components/skeletons/TentangKamiSkeleton'
+import { SITE_URL } from '@/lib/config/site'
 
 export const metadata: Metadata = {
   title: 'Tentang Kami',
@@ -9,10 +10,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Tentang Kami | Lensa Berita Bali',
     description: 'Kenali Lensa Berita Bali — visi, misi, layanan, dan cara menghubungi kami.',
-    url: 'https://lensaberitabali.com/tentang-kami',
+    url: `${SITE_URL}/tentang-kami`,
     type: 'website',
   },
-  alternates: { canonical: 'https://lensaberitabali.com/tentang-kami' },
+  alternates: { canonical: `${SITE_URL}/tentang-kami` },
 }
 
 const AboutPage = () => {

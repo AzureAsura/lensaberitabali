@@ -62,6 +62,7 @@ model User {
 
 model Berita {
   id              String   @id @default(cuid())
+  slug            String   @unique
   judul           String
   penulis         String
   gambar          String

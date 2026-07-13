@@ -178,7 +178,7 @@ const FormEditBerita = ({ id, defaultValues, kategoris }: Props) => {
         </div>
       </div>
 
-      <div className="flex flex-col space-y-2">
+      {/* <div className="flex flex-col space-y-2">
         <label className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
           <Tag size={16} className="text-primary" /> Kategori
         </label>
@@ -192,7 +192,7 @@ const FormEditBerita = ({ id, defaultValues, kategoris }: Props) => {
             <option key={k.id} value={k.nama}>{k.nama}</option>
           ))}
         </select>
-      </div>
+      </div> */}
 
       <div className="flex flex-col space-y-2">
         <label className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">

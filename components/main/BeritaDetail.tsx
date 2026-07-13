@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
-import { getBeritaById } from '@/lib/data/berita'
+import { getBeritaBySlug } from '@/lib/data/berita'
 
 
 
-const BeritaDetail = async ({ id }: { id: string }) => {
-  const berita = await getBeritaById(id)
+const BeritaDetail = async ({ slug }: { slug: string }) => {
+  const berita = await getBeritaBySlug(slug)
   if (!berita) notFound()
 
   const formattedDate = berita.createdAt.toLocaleString('id-ID', {

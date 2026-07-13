@@ -15,9 +15,9 @@ const HeroNews = async ({ page = 1 }: { page?: number }) => {
         <p className="type-body text-center text-muted-foreground">Belum ada berita.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 space-y-4">
-          {berita.map((item: { id: string; judul: string; gambar: string }) => (
+          {berita.map((item: { id: string; slug: string; judul: string; gambar: string }) => (
             <div key={item.id} className="group cursor-pointer flex flex-col space-y-4">
-              <Link href={`/berita/${item.id}`} className="relative w-full aspect-[16/10] overflow-hidden rounded-[24px] shadow-sm bg-gray-100">
+              <Link href={`/berita/${item.slug}`} className="relative w-full aspect-[16/10] overflow-hidden rounded-[24px] shadow-sm bg-gray-100">
                 <Image
                   src={item.gambar}
                   alt={item.judul}
@@ -26,7 +26,7 @@ const HeroNews = async ({ page = 1 }: { page?: number }) => {
                   className="object-cover transition-transform duration-500 ease-in-out"
                 />
               </Link>
-              <Link href={`/berita/${item.id}`}>
+              <Link href={`/berita/${item.slug}`}>
                 <h3 className="type-card-title line-clamp-3 group-hover:underline">
                   {item.judul}
                 </h3>

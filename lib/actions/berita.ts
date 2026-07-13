@@ -4,6 +4,7 @@ import { auth } from '@/auth'
 import { beritaValidation } from '@/lib/zod'
 import { revalidatePath } from 'next/cache'
 import { deleteImage } from '@/lib/blob'
+import { generateUniqueSlug } from '@/lib/slug'
 
 type ActionState = { error?: string; success?: boolean } | null
 
@@ -26,12 +27,14 @@ export async function createBeritaAction(prevState: ActionState, formData: FormD
   if (!validated.success) return { error: validated.error.issues[0].message }
 
   try {
+    const slug = await generateUniqueSlug(validated.data.judul)
     await prisma.berita.create({
       data: {
         ...validated.data,
         deskripsiGambar: validated.data.deskripsiGambar || null,
         kategori: validated.data.kategori || null,
         gambar,
+        slug,
       },
     })
   } catch {
@@ -87,7 +90,7 @@ export async function updateBeritaAction(id: string, prevState: ActionState, for
   revalidatePath('/')
   revalidatePath('/admin/berita')
   revalidatePath('/admin/edit-berita/[id]', 'page')
-  revalidatePath(`/berita/${id}`)
+  revalidatePath('/berita/[slug]', 'page')
   return { success: true }
 }
 

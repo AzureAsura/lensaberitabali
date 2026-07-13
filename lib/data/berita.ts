@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import prisma from '@/lib/prisma'
 
 const LIMIT = 9
@@ -10,7 +11,7 @@ export async function getBeritaList(page = 1) {
         orderBy: { createdAt: 'desc' },
         skip,
         take: LIMIT,
-        select: { id: true, judul: true, gambar: true, penulis: true, createdAt: true },
+        select: { id: true, slug: true, judul: true, gambar: true, penulis: true, createdAt: true },
       }),
       prisma.berita.count(),
     ])
@@ -21,20 +22,31 @@ export async function getBeritaList(page = 1) {
   }
 }
 
-export async function getBeritaById(id: string) {
+// Wrapped in React `cache()` so generateMetadata and the page component
+// (both of which call this per request) share one query instead of two.
+export const getBeritaById = cache(async (id: string) => {
   try {
     return await prisma.berita.findUnique({ where: { id } })
   } catch (error) {
     console.error('getBeritaById error:', error)
     return null
   }
-}
+})
+
+export const getBeritaBySlug = cache(async (slug: string) => {
+  try {
+    return await prisma.berita.findUnique({ where: { slug } })
+  } catch (error) {
+    console.error('getBeritaBySlug error:', error)
+    return null
+  }
+})
 
 export async function getAllBerita() {
   try {
     return await prisma.berita.findMany({
       orderBy: { createdAt: 'desc' },
-      select: { id: true, judul: true, gambar: true, penulis: true, createdAt: true },
+      select: { id: true, slug: true, judul: true, gambar: true, penulis: true, createdAt: true, updatedAt: true },
     })
   } catch (error) {
     console.error('getAllBerita error:', error)
