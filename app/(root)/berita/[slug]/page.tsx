@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import BeritaDetail from '@/components/main/BeritaDetail'
 import BeritaDetailSkeleton from '@/components/skeletons/BeritaDetailSkeleton'
 import JsonLd from '@/components/seo/JsonLd'
@@ -47,13 +48,7 @@ const ArticleDetailPage = async ({ params }: Props) => {
   const { slug } = await params
   const berita = await getBeritaBySlug(slug)
 
-  if (!berita) {
-    return (
-      <Suspense fallback={<BeritaDetailSkeleton />}>
-        <BeritaDetail slug={slug} />
-      </Suspense>
-    )
-  }
+  if (!berita) notFound()
 
   const description = berita.konten
     .replace(/[#*_`>\-\[\]]/g, '')

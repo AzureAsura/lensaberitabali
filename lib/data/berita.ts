@@ -53,3 +53,19 @@ export async function getAllBerita() {
     return []
   }
 }
+
+// Articles published in the last 48h, for the Google News sitemap
+// (Google News only accepts URLs published within the last 48 hours).
+export async function getRecentBeritaForNews() {
+  const since = new Date(Date.now() - 48 * 60 * 60 * 1000)
+  try {
+    return await prisma.berita.findMany({
+      where: { createdAt: { gte: since } },
+      orderBy: { createdAt: 'desc' },
+      select: { slug: true, judul: true, createdAt: true },
+    })
+  } catch (error) {
+    console.error('getRecentBeritaForNews error:', error)
+    return []
+  }
+}
