@@ -13,8 +13,8 @@ export const registerValidation = z.object({
 
 export const beritaValidation = z.object({
   judul: z.string().min(1, 'Judul wajib diisi').max(150, 'Judul maksimal 150 karakter'),
-  penulis: z.string().min(1, 'Penulis wajib diisi'),
-  deskripsiGambar: z.string().optional(),
+  penulis: z.string().min(1, 'Penulis wajib diisi').max(150, 'Penulis maksimal 150 karakter'),
+  deskripsiGambar: z.string().max(300, 'Deskripsi foto maksimal 300 karakter').optional(),
   konten: z.string().min(1, 'Isi berita wajib diisi'),
   kategori: z.string().optional(),
 })
