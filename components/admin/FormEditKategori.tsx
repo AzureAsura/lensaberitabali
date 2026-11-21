@@ -3,6 +3,9 @@ import { useActionState, useEffect } from 'react'
 import { FolderPlus, Save } from 'lucide-react'
 import { updateKategoriAction } from '@/lib/actions/kategori'
 import { toast } from 'sonner'
+import { kategoriValidation } from '@/lib/zod'
+import { useLiveValidation } from '@/lib/useLiveValidation'
+import FieldError from '@/components/admin/FieldError'
 
 type Props = {
   id: string
@@ -12,6 +15,7 @@ type Props = {
 const FormEditKategori = ({ id, defaultNama }: Props) => {
   const boundAction = updateKategoriAction.bind(null, id)
   const [state, formAction, isPending] = useActionState(boundAction, null)
+  const v = useLiveValidation(kategoriValidation, state?.fieldErrors)
 
   useEffect(() => {
     if (state?.success) toast.success('Kategori berhasil diperbarui!')
@@ -19,7 +23,7 @@ const FormEditKategori = ({ id, defaultNama }: Props) => {
   }, [state])
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form action={formAction} noValidate onChange={v.onChange} className="space-y-6">
 
       <div className="flex flex-col space-y-2">
         <label className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
@@ -28,11 +32,12 @@ const FormEditKategori = ({ id, defaultNama }: Props) => {
         <input
           type="text"
           name="nama"
-          defaultValue={defaultNama}
+          defaultValue={state?.fields?.nama ?? defaultNama}
           placeholder="Masukkan nama kategori"
           className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium"
           required
         />
+        <FieldError msg={v.error('nama')} />
       </div>
 
       <div className="pt-4 border-t-2 border-gray-100 flex justify-end">

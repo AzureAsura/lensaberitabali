@@ -23,7 +23,7 @@ export const tentangKamiValidation = z.object({
   tentangKami: z.string().min(1, 'Deskripsi wajib diisi'),
   visiMisi: z.string().min(1, 'Visi & misi wajib diisi'),
   layanan: z.string().min(1, 'Layanan wajib diisi'),
-  email: z.string().min(1).email('Format email tidak valid'),
+  email: z.string().min(1, 'Email wajib diisi').email('Format email tidak valid'),
   whatsapp: z.string().min(1, 'WhatsApp wajib diisi'),
   instagram: z.string().min(1, 'Instagram wajib diisi'),
   tiktok: z.string().min(1, 'TikTok wajib diisi'),

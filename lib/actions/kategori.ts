@@ -1,9 +1,10 @@
 'use server'
 import prisma from '@/lib/prisma'
+import { z } from 'zod'
 import { kategoriValidation } from '@/lib/zod'
 import { revalidatePath } from 'next/cache'
 
-type ActionState = { error?: string; success?: boolean } | null
+type ActionState = { error?: string; fieldErrors?: Record<string, string[] | undefined>; success?: boolean; fields?: Record<string, string | undefined> } | null
 
 export async function createKategoriAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
   const fields = {
@@ -11,7 +12,7 @@ export async function createKategoriAction(prevState: ActionState, formData: For
   }
 
   const validated = kategoriValidation.safeParse(fields)
-  if (!validated.success) return { error: validated.error.issues[0].message }
+  if (!validated.success) return { fieldErrors: z.flattenError(validated.error).fieldErrors, fields }
 
   try {
     await prisma.kategori.create({ data: validated.data })
@@ -29,7 +30,7 @@ export async function updateKategoriAction(id: string, prevState: ActionState, f
   }
 
   const validated = kategoriValidation.safeParse(fields)
-  if (!validated.success) return { error: validated.error.issues[0].message }
+  if (!validated.success) return { fieldErrors: z.flattenError(validated.error).fieldErrors, fields }
 
   try {
     await prisma.kategori.update({ where: { id }, data: validated.data })

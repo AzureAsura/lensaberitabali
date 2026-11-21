@@ -1,6 +1,9 @@
 'use client'
 import { useActionState, useState, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
+import { beritaValidation } from '@/lib/zod'
+import { useLiveValidation } from '@/lib/useLiveValidation'
+import FieldError from '@/components/admin/FieldError'
 import { MAX_IMAGE_SIZE } from '@/lib/config/upload'
 import { Type, User, ImageIcon, FileText, Tag } from 'lucide-react'
 import dynamic from 'next/dynamic'
@@ -69,6 +72,7 @@ const FormEditBerita = ({ id, defaultValues, kategoris }: Props) => {
 
   const boundAction = updateBeritaAction.bind(null, id)
   const [state, formAction, isPending] = useActionState(boundAction, null)
+  const v = useLiveValidation(beritaValidation, state?.fieldErrors)
 
   useEffect(() => {
     if (state?.success) toast.success('Berita berhasil diperbarui!')
@@ -95,7 +99,7 @@ const FormEditBerita = ({ id, defaultValues, kategoris }: Props) => {
   }
 
   return (
-    <form action={handleFormAction} className="space-y-6">
+    <form action={handleFormAction} noValidate onChange={v.onChange} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex flex-col space-y-2">
           <label className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
@@ -108,6 +112,7 @@ const FormEditBerita = ({ id, defaultValues, kategoris }: Props) => {
             className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium"
             required
           />
+          <FieldError msg={v.error('judul')} />
         </div>
 
         <div className="flex flex-col space-y-2">
@@ -121,6 +126,7 @@ const FormEditBerita = ({ id, defaultValues, kategoris }: Props) => {
             className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium"
             required
           />
+          <FieldError msg={v.error('penulis')} />
         </div>
       </div>
 
@@ -162,6 +168,7 @@ const FormEditBerita = ({ id, defaultValues, kategoris }: Props) => {
             rows={3}
             className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium resize-none h-[110px]"
           />
+          <FieldError msg={v.error('deskripsiGambar')} />
         </div>
       </div>
 
@@ -188,12 +195,13 @@ const FormEditBerita = ({ id, defaultValues, kategoris }: Props) => {
         <div className={editorClass}>
           <MdEditor
             value={content}
-            onChange={setContent}
+            onChange={(val) => { setContent(val); v.validate('konten', val) }}
             language="en-US"
             previewTheme="github"
             style={{ height: 350 }}
           />
         </div>
+        <FieldError msg={v.error('konten')} />
       </div>
 
       <div className="pt-4 border-t-2 border-gray-100 flex justify-end">

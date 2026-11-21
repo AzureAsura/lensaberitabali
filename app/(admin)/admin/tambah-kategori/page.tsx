@@ -3,9 +3,13 @@ import { useActionState, useEffect } from 'react'
 import { FolderPlus, Save } from 'lucide-react'
 import { createKategoriAction } from '@/lib/actions/kategori'
 import { toast } from 'sonner'
+import { kategoriValidation } from '@/lib/zod'
+import { useLiveValidation } from '@/lib/useLiveValidation'
+import FieldError from '@/components/admin/FieldError'
 
 const TambahKategoriPage = () => {
   const [state, formAction, isPending] = useActionState(createKategoriAction, null)
+  const v = useLiveValidation(kategoriValidation, state?.fieldErrors)
 
   useEffect(() => {
     if (state?.success) toast.success('Kategori berhasil ditambahkan!')
@@ -26,7 +30,7 @@ const TambahKategoriPage = () => {
         </div>
       </div>
 
-      <form action={formAction} className="space-y-6">
+      <form action={formAction} noValidate onChange={v.onChange} className="space-y-6">
 
         <div className="flex flex-col space-y-2">
           <label className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
@@ -35,10 +39,12 @@ const TambahKategoriPage = () => {
           <input
             type="text"
             name="nama"
+            defaultValue={state?.fields?.nama ?? ''}
             placeholder="Masukkan nama kategori (Contoh: Kriminal, Budaya, Hiburan)"
             className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium"
             required
           />
+          <FieldError msg={v.error('nama')} />
         </div>
 
         <div className="pt-4 border-t-2 border-gray-100 flex justify-end">

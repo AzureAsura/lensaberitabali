@@ -1,13 +1,14 @@
 'use server'
 import prisma from '@/lib/prisma'
 import { auth } from '@/auth'
+import { z } from 'zod'
 import { beritaValidation } from '@/lib/zod'
 import { revalidatePath } from 'next/cache'
 import { deleteImage, uploadImage } from '@/lib/blob'
 import { generateUniqueSlug } from '@/lib/slug'
 
 // fields: echoed back on failure so the form can repopulate (React resets uncontrolled inputs after an action)
-type ActionState = { error?: string; success?: boolean; fields?: Record<string, string | undefined> } | null
+type ActionState = { error?: string; fieldErrors?: Record<string, string[] | undefined>; success?: boolean; fields?: Record<string, string | undefined> } | null
 
 export async function createBeritaAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
   // const session = await auth()
@@ -22,7 +23,7 @@ export async function createBeritaAction(prevState: ActionState, formData: FormD
   }
 
   const validated = beritaValidation.safeParse(fields)
-  if (!validated.success) return { error: validated.error.issues[0].message, fields }
+  if (!validated.success) return { fieldErrors: z.flattenError(validated.error).fieldErrors, fields }
 
   // Upload only after validation passes, so failed submits never leave orphan blobs
   const file = formData.get('gambar')
@@ -65,7 +66,7 @@ export async function updateBeritaAction(id: string, prevState: ActionState, for
   }
 
   const validated = beritaValidation.safeParse(fields)
-  if (!validated.success) return { error: validated.error.issues[0].message, fields }
+  if (!validated.success) return { fieldErrors: z.flattenError(validated.error).fieldErrors, fields }
 
   // Image is optional on edit: upload only when a new file was picked
   const file = formData.get('gambar')

@@ -1,6 +1,9 @@
 'use client'
 import { useActionState, useState, useEffect } from 'react'
 import { toast } from 'sonner'
+import { tentangKamiValidation } from '@/lib/zod'
+import { useLiveValidation } from '@/lib/useLiveValidation'
+import FieldError from '@/components/admin/FieldError'
 import { Mail, Phone, FileText, Save, Info } from 'lucide-react'
 import { FaInstagram, FaYoutube } from 'react-icons/fa'
 import dynamic from 'next/dynamic'
@@ -63,6 +66,7 @@ const FormEditTentangKami = ({ defaultValues }: Props) => {
   const [visionMission, setVisionMission] = useState(defaultValues?.visiMisi ?? '')
   const [services, setServices] = useState(defaultValues?.layanan ?? '')
   const [state, formAction, isPending] = useActionState(updateTentangKamiAction, null)
+  const v = useLiveValidation(tentangKamiValidation, state?.fieldErrors)
 
   useEffect(() => {
     if (state?.success) toast.success('Perubahan berhasil disimpan!')
@@ -77,15 +81,16 @@ const FormEditTentangKami = ({ defaultValues }: Props) => {
   }
 
   return (
-    <form action={handleFormAction} className="space-y-10">
+    <form action={handleFormAction} noValidate onChange={v.onChange} className="space-y-10">
 
       <div className="flex flex-col space-y-3">
         <label className="text-sm font-bold text-gray-700 uppercase tracking-wider flex items-center gap-2">
           <Info size={16} className="text-primary" /> Deskripsi Tentang Kami
         </label>
         <div className={editorClass}>
-          <MdEditor value={aboutUs} onChange={setAboutUs} language="en-US" previewTheme="github" style={{ height: 300 }} />
+          <MdEditor value={aboutUs} onChange={(val) => { setAboutUs(val); v.validate('tentangKami', val) }} language="en-US" previewTheme="github" style={{ height: 300 }} />
         </div>
+        <FieldError msg={v.error('tentangKami')} />
       </div>
 
       <div className="flex flex-col space-y-3">
@@ -93,8 +98,9 @@ const FormEditTentangKami = ({ defaultValues }: Props) => {
           <FileText size={16} className="text-primary" /> Visi &amp; Misi Kami
         </label>
         <div className={editorClass}>
-          <MdEditor value={visionMission} onChange={setVisionMission} language="en-US" previewTheme="github" style={{ height: 300 }} />
+          <MdEditor value={visionMission} onChange={(val) => { setVisionMission(val); v.validate('visiMisi', val) }} language="en-US" previewTheme="github" style={{ height: 300 }} />
         </div>
+        <FieldError msg={v.error('visiMisi')} />
       </div>
 
       <div className="flex flex-col space-y-3">
@@ -102,8 +108,9 @@ const FormEditTentangKami = ({ defaultValues }: Props) => {
           <FileText size={16} className="text-primary" /> Apa yang Kami Sajikan?
         </label>
         <div className={editorClass}>
-          <MdEditor value={services} onChange={setServices} language="en-US" previewTheme="github" style={{ height: 300 }} />
+          <MdEditor value={services} onChange={(val) => { setServices(val); v.validate('layanan', val) }} language="en-US" previewTheme="github" style={{ height: 300 }} />
         </div>
+        <FieldError msg={v.error('layanan')} />
       </div>
 
       <div className="border-t-2 border-gray-100 pt-8 space-y-4">
@@ -115,36 +122,41 @@ const FormEditTentangKami = ({ defaultValues }: Props) => {
             <span className="text-xs font-bold text-gray-600 uppercase tracking-wider flex items-center gap-1.5">
               <Mail size={14} /> Email Media
             </span>
-            <input type="email" name="email" defaultValue={defaultValues?.email ?? ''}
+            <input type="email" name="email" defaultValue={state?.fields?.email ?? defaultValues?.email ?? ''}
               className="w-full border-2 border-gray-200 px-4 py-2.5 rounded-xl outline-none focus:border-primary transition-all text-sm font-medium" />
+            <FieldError msg={v.error('email')} />
           </div>
           <div className="flex flex-col space-y-1.5">
             <span className="text-xs font-bold text-gray-600 uppercase tracking-wider flex items-center gap-1.5">
               <Phone size={14} /> Nomor WhatsApp
             </span>
-            <input type="text" name="whatsapp" defaultValue={defaultValues?.whatsapp ?? ''}
+            <input type="text" name="whatsapp" defaultValue={state?.fields?.whatsapp ?? defaultValues?.whatsapp ?? ''}
               className="w-full border-2 border-gray-200 px-4 py-2.5 rounded-xl outline-none focus:border-primary transition-all text-sm font-medium" />
+            <FieldError msg={v.error('whatsapp')} />
           </div>
           <div className="flex flex-col space-y-1.5">
             <span className="text-xs font-bold text-gray-600 uppercase tracking-wider flex items-center gap-1.5">
               <FaInstagram size={14} /> Username Instagram
             </span>
-            <input type="text" name="instagram" defaultValue={defaultValues?.instagram ?? ''}
+            <input type="text" name="instagram" defaultValue={state?.fields?.instagram ?? defaultValues?.instagram ?? ''}
               className="w-full border-2 border-gray-200 px-4 py-2.5 rounded-xl outline-none focus:border-primary transition-all text-sm font-medium" />
+            <FieldError msg={v.error('instagram')} />
           </div>
           <div className="flex flex-col space-y-1.5">
             <span className="text-xs font-bold text-gray-600 uppercase tracking-wider flex items-center gap-1.5">
               <span className="font-extrabold text-xs">𝞃</span> Username Tiktok
             </span>
-            <input type="text" name="tiktok" defaultValue={defaultValues?.tiktok ?? ''}
+            <input type="text" name="tiktok" defaultValue={state?.fields?.tiktok ?? defaultValues?.tiktok ?? ''}
               className="w-full border-2 border-gray-200 px-4 py-2.5 rounded-xl outline-none focus:border-primary transition-all text-sm font-medium" />
+            <FieldError msg={v.error('tiktok')} />
           </div>
           <div className="flex flex-col space-y-1.5 md:col-span-2">
             <span className="text-xs font-bold text-gray-600 uppercase tracking-wider flex items-center gap-1.5">
               <FaYoutube size={14} /> Username / URL Youtube
             </span>
-            <input type="text" name="youtube" defaultValue={defaultValues?.youtube ?? ''}
+            <input type="text" name="youtube" defaultValue={state?.fields?.youtube ?? defaultValues?.youtube ?? ''}
               className="w-full border-2 border-gray-200 px-4 py-2.5 rounded-xl outline-none focus:border-primary transition-all text-sm font-medium" />
+            <FieldError msg={v.error('youtube')} />
           </div>
         </div>
       </div>
