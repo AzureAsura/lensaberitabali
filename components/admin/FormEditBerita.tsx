@@ -115,7 +115,7 @@ const FormEditBerita = ({ id, defaultValues, kategoris }: Props) => {
           <input
             type="text"
             name="judul"
-            defaultValue={defaultValues.judul}
+            defaultValue={state?.fields?.judul ?? defaultValues.judul}
             className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium"
             required
           />
@@ -128,7 +128,7 @@ const FormEditBerita = ({ id, defaultValues, kategoris }: Props) => {
           <input
             type="text"
             name="penulis"
-            defaultValue={defaultValues.penulis}
+            defaultValue={state?.fields?.penulis ?? defaultValues.penulis}
             className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium"
             required
           />
@@ -171,7 +171,7 @@ const FormEditBerita = ({ id, defaultValues, kategoris }: Props) => {
           </label>
           <textarea
             name="deskripsiGambar"
-            defaultValue={defaultValues.deskripsiGambar ?? ''}
+            defaultValue={state?.fields?.deskripsiGambar ?? defaultValues.deskripsiGambar ?? ''}
             rows={3}
             className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium resize-none h-[110px]"
           />

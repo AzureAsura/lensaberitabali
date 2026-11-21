@@ -6,14 +6,12 @@ import { revalidatePath } from 'next/cache'
 import { deleteImage } from '@/lib/blob'
 import { generateUniqueSlug } from '@/lib/slug'
 
-type ActionState = { error?: string; success?: boolean } | null
+// fields: echoed back on failure so the form can repopulate (React resets uncontrolled inputs after an action)
+type ActionState = { error?: string; success?: boolean; fields?: Record<string, string | undefined> } | null
 
 export async function createBeritaAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
   // const session = await auth()
   // if (!session?.user || session.user.role !== 'admin') return { error: 'Unauthorized' }
-
-  const gambar = formData.get('gambar') as string
-  if (!gambar) return { error: 'Gambar wajib diupload' }
 
   const fields = {
     judul: formData.get('judul') as string,
@@ -23,8 +21,11 @@ export async function createBeritaAction(prevState: ActionState, formData: FormD
     kategori: (formData.get('kategori') as string) || undefined,
   }
 
+  const gambar = formData.get('gambar') as string
+  if (!gambar) return { error: 'Gambar wajib diupload', fields }
+
   const validated = beritaValidation.safeParse(fields)
-  if (!validated.success) return { error: validated.error.issues[0].message }
+  if (!validated.success) return { error: validated.error.issues[0].message, fields }
 
   try {
     const slug = await generateUniqueSlug(validated.data.judul)
@@ -38,7 +39,7 @@ export async function createBeritaAction(prevState: ActionState, formData: FormD
       },
     })
   } catch {
-    return { error: 'Gagal menyimpan berita' }
+    return { error: 'Gagal menyimpan berita', fields }
   }
 
   revalidatePath('/')
@@ -59,7 +60,7 @@ export async function updateBeritaAction(id: string, prevState: ActionState, for
   }
 
   const validated = beritaValidation.safeParse(fields)
-  if (!validated.success) return { error: validated.error.issues[0].message }
+  if (!validated.success) return { error: validated.error.issues[0].message, fields }
 
   const gambar = formData.get('gambar') as string | null
 
@@ -79,7 +80,7 @@ export async function updateBeritaAction(id: string, prevState: ActionState, for
       },
     })
   } catch {
-    return { error: 'Gagal memperbarui berita' }
+    return { error: 'Gagal memperbarui berita', fields }
   }
 
   // Delete the old blob now that the DB is updated (errors are swallowed inside deleteImage)

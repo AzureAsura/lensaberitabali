@@ -100,6 +100,7 @@ const FormTambahBerita = ({ kategoris }: { kategoris: Kategori[] }) => {
           <input
             type="text"
             name="judul"
+            defaultValue={state?.fields?.judul ?? ''}
             className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium"
             required
           />
@@ -112,6 +113,7 @@ const FormTambahBerita = ({ kategoris }: { kategoris: Kategori[] }) => {
           <input
             type="text"
             name="penulis"
+            defaultValue={state?.fields?.penulis ?? ''}
             className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium"
             required
           />
@@ -152,6 +154,7 @@ const FormTambahBerita = ({ kategoris }: { kategoris: Kategori[] }) => {
           </label>
           <textarea
             name="deskripsiGambar"
+            defaultValue={state?.fields?.deskripsiGambar ?? ''}
             rows={3}
             className="w-full border-2 border-gray-200 px-4 py-3 rounded-xl outline-none focus:border-primary transition-all text-base font-medium resize-none h-[110px]"
           />
