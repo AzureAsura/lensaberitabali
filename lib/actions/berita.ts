@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma'
 import { auth } from '@/auth'
 import { beritaValidation } from '@/lib/zod'
 import { revalidatePath } from 'next/cache'
-import { deleteImage } from '@/lib/blob'
+import { deleteImage, uploadImage } from '@/lib/blob'
 import { generateUniqueSlug } from '@/lib/slug'
 
 // fields: echoed back on failure so the form can repopulate (React resets uncontrolled inputs after an action)
@@ -21,11 +21,15 @@ export async function createBeritaAction(prevState: ActionState, formData: FormD
     kategori: (formData.get('kategori') as string) || undefined,
   }
 
-  const gambar = formData.get('gambar') as string
-  if (!gambar) return { error: 'Gambar wajib diupload', fields }
-
   const validated = beritaValidation.safeParse(fields)
   if (!validated.success) return { error: validated.error.issues[0].message, fields }
+
+  // Upload only after validation passes, so failed submits never leave orphan blobs
+  const file = formData.get('gambar')
+  if (!(file instanceof File) || file.size === 0) return { error: 'Gambar wajib diupload', fields }
+  const uploaded = await uploadImage(file)
+  if ('error' in uploaded) return { error: uploaded.error, fields }
+  const gambar = uploaded.url
 
   try {
     const slug = await generateUniqueSlug(validated.data.judul)
@@ -39,6 +43,7 @@ export async function createBeritaAction(prevState: ActionState, formData: FormD
       },
     })
   } catch {
+    await deleteImage(gambar)
     return { error: 'Gagal menyimpan berita', fields }
   }
 
@@ -62,7 +67,14 @@ export async function updateBeritaAction(id: string, prevState: ActionState, for
   const validated = beritaValidation.safeParse(fields)
   if (!validated.success) return { error: validated.error.issues[0].message, fields }
 
-  const gambar = formData.get('gambar') as string | null
+  // Image is optional on edit: upload only when a new file was picked
+  const file = formData.get('gambar')
+  let gambar: string | null = null
+  if (file instanceof File && file.size > 0) {
+    const uploaded = await uploadImage(file)
+    if ('error' in uploaded) return { error: uploaded.error, fields }
+    gambar = uploaded.url
+  }
 
   // Fetch the current image URL so we can delete the old blob after a successful update
   const existing = gambar
@@ -80,6 +92,7 @@ export async function updateBeritaAction(id: string, prevState: ActionState, for
       },
     })
   } catch {
+    await deleteImage(gambar)
     return { error: 'Gagal memperbarui berita', fields }
   }
 

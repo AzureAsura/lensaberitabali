@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { createBeritaAction } from '@/lib/actions/berita'
 import { toast } from 'sonner'
+import { MAX_IMAGE_SIZE } from '@/lib/config/upload'
 
 const MdEditor = dynamic(
   () => import('md-editor-rt').then((mod) => mod.MdEditor),
@@ -49,9 +50,8 @@ type Kategori = { id: string; nama: string }
 
 const FormTambahBerita = ({ kategoris }: { kategoris: Kategori[] }) => {
   const [content, setContent] = useState('')
-  const [imageUrl, setImageUrl] = useState('')
+  const [file, setFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState('')
-  const [uploading, setUploading] = useState(false)
   const [state, formAction, isPending] = useActionState(createBeritaAction, null)
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -60,33 +60,22 @@ const FormTambahBerita = ({ kategoris }: { kategoris: Kategori[] }) => {
     if (state?.error) toast.error(state.error)
   }, [state])
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setImagePreview(URL.createObjectURL(file))
-    setUploading(true)
-
-    const fd = new FormData()
-    fd.append('file', file)
-
-    try {
-      const res = await fetch('/api/upload', { method: 'PUT', body: fd })
-      const blob = await res.json()
-      if (!res.ok) throw new Error(blob.message)
-      setImageUrl(blob.url ?? '')
-    } catch {
-      setImageUrl('')
-      setImagePreview('')
-      toast.error('Gagal mengupload gambar')
-    } finally {
-      setUploading(false)
+  // Image is only previewed locally; it is uploaded to Blob by the server action on submit
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const picked = e.target.files?.[0]
+    if (!picked) return
+    if (picked.size > MAX_IMAGE_SIZE) {
+      e.target.value = ''
+      return toast.error('Ukuran gambar maksimal 4MB')
     }
+    if (imagePreview) URL.revokeObjectURL(imagePreview)
+    setFile(picked)
+    setImagePreview(URL.createObjectURL(picked))
   }
 
   const handleFormAction = (formData: FormData) => {
     formData.set('konten', content)
-    formData.set('gambar', imageUrl)
+    if (file) formData.set('gambar', file)
     return formAction(formData)
   }
 
@@ -133,9 +122,7 @@ const FormTambahBerita = ({ kategoris }: { kategoris: Kategori[] }) => {
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
               onChange={handleFileChange}
             />
-            {uploading ? (
-              <span className="text-sm font-semibold text-gray-500">Mengupload...</span>
-            ) : imagePreview ? (
+            {imagePreview ? (
               <div className="relative w-full aspect-video rounded-lg overflow-hidden">
                 <Image src={imagePreview} alt="preview" fill className="object-cover" />
               </div>
@@ -194,7 +181,7 @@ const FormTambahBerita = ({ kategoris }: { kategoris: Kategori[] }) => {
       <div className="pt-4 border-t-2 border-gray-100 flex justify-end">
         <button
           type="submit"
-          disabled={isPending || uploading}
+          disabled={isPending}
           className="w-full md:w-auto bg-primary text-white font-bold px-8 py-3.5 rounded-xl hover:bg-primary/90 transition-all text-base tracking-wide uppercase shadow-sm disabled:opacity-60"
         >
           {isPending ? 'Menerbitkan...' : 'Terbitkan Berita'}
