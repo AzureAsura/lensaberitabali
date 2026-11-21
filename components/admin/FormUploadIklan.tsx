@@ -3,13 +3,13 @@ import { useActionState, useState, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
 import { Upload, ImageIcon } from 'lucide-react'
 import { uploadIklanAction } from '@/lib/actions/iklan'
+import { MAX_IMAGE_SIZE } from '@/lib/config/upload'
 import Image from 'next/image'
 
 const FormUploadIklan = ({ currentIklan }: { currentIklan?: string | null }) => {
   const [state, formAction, isPending] = useActionState(uploadIklanAction, null)
-  const [imageUrl, setImageUrl] = useState('')
+  const [file, setFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const [uploading, setUploading] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -17,32 +17,21 @@ const FormUploadIklan = ({ currentIklan }: { currentIklan?: string | null }) => 
     if (state?.error) toast.error(state.error)
   }, [state])
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    setImagePreview(URL.createObjectURL(file))
-    setUploading(true)
-
-    const fd = new FormData()
-    fd.append('file', file)
-
-    try {
-      const res = await fetch('/api/upload', { method: 'PUT', body: fd })
-      const blob = await res.json()
-      if (!res.ok) throw new Error(blob.message)
-      setImageUrl(blob.url ?? '')
-    } catch {
-      setImageUrl('')
-      setImagePreview(null)
-      toast.error('Gagal mengupload gambar')
-    } finally {
-      setUploading(false)
+  // Image is only previewed locally; it is uploaded to Blob by the server action on submit
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const picked = e.target.files?.[0]
+    if (!picked) return
+    if (picked.size > MAX_IMAGE_SIZE) {
+      e.target.value = ''
+      return toast.error('Ukuran gambar maksimal 4MB')
     }
+    if (imagePreview) URL.revokeObjectURL(imagePreview)
+    setFile(picked)
+    setImagePreview(URL.createObjectURL(picked))
   }
 
   const handleFormAction = (formData: FormData) => {
-    formData.set('gambar', imageUrl)
+    if (file) formData.set('gambar', file)
     return formAction(formData)
   }
 
@@ -60,16 +49,10 @@ const FormUploadIklan = ({ currentIklan }: { currentIklan?: string | null }) => 
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             onChange={handleFileChange}
           />
-          {uploading ? (
-            <span className="type-muted font-medium text-center">Mengupload...</span>
-          ) : (
-            <>
-              <Upload size={28} className="text-gray-400 mb-2" />
-              <span className="type-muted font-medium text-center">
-                {imagePreview ? 'Klik untuk ganti gambar' : 'Klik atau drag gambar iklan di sini'}
-              </span>
-            </>
-          )}
+          <Upload size={28} className="text-gray-400 mb-2" />
+          <span className="type-muted font-medium text-center">
+            {imagePreview ? 'Klik untuk ganti gambar' : 'Klik atau drag gambar iklan di sini'}
+          </span>
         </div>
       </div>
 
@@ -94,7 +77,7 @@ const FormUploadIklan = ({ currentIklan }: { currentIklan?: string | null }) => 
       <div className="pt-4 border-t-2 border-gray-100 flex justify-end">
         <button
           type="submit"
-          disabled={isPending || uploading}
+          disabled={isPending}
           className="w-full md:w-auto bg-primary text-white font-bold px-8 py-3.5 rounded-xl hover:bg-primary/90 transition-all text-base tracking-wide uppercase shadow-sm disabled:opacity-60"
         >
           {isPending ? 'Menyimpan...' : 'Upload Iklan'}
